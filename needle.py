@@ -1,10 +1,15 @@
+import string
+import re
+import Class_Lent
 import numpy as np
 class needle:
     def __init__(self):
-        self.L = [[["","",""],
+        self.actions = ["<", "_", ">", "*"]
+        self.L = [[["qr>","ab<",""],
                    ["","",""]],
                   [["","",""],
                    ["","",""]]]
+        self.tape = Class_Lent.lent_turring()
         
     
     def new_condition(self):
@@ -14,10 +19,22 @@ class needle:
         self.L[i].append([])
     
     def set_needle_derective(self, i, j, der):
-        self.L[i].insert(j, der)
+        if str.len(der) == 3 and der.endswith(('>','<','_')) == True:
+            self.L[i].insert(j, der)
+            
+        
     
     def get_needle_derective(self, i, j):
         return self.L[i][j]
+    
+    ##def set_letter(self, lttr):
+    ##    self.alphabet.append(lttr)
+    
+    
+    ##def get_letter(self, i):
+    ##    return self.alphabet[i]
+    
+NDL = needle()
 
 
 
@@ -25,9 +42,7 @@ class needle:
     
        
 
-a = needle()
+
 
 print(a.L)
-a.new_order(0)
-a.new_condition()
 print(a.L)
