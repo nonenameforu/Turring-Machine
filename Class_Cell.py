@@ -10,15 +10,7 @@ class cell:## КЛАСС ЯЧЕЙКИ ДЛЯ ЛЕНТЫ ТЬЮРИНГА -------
         ##self.__tail_cell = self.__left_cell
     
     
-    def New_Cell_Right(self, prev):
-        new_right = cell()
-        new_right._left_cell = prev
-        return new_right
-        
-    def New_Cell_Left(self, prev):
-        new_left = cell()
-        new_left._left_cell = prev
-        return new_left
+
         
     
         
