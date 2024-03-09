@@ -69,11 +69,11 @@ class lent_turring:## КЛАСС ЛЕНТЫ МАШИНЫ ТЬЮРИНГA  ------
        self.Cell.set_Index(0)
        
        
-    def __Tree2LentLEftVariant(self, befor_cell):
+    def Tree2LentLEftVariant(self, befor_cell):
         Left = self.Cell.get_Left_cell()
         Left.set_Right_cell(befor_cell.get_Right_cell())
         
-    def __Tree2LentRightVariant(self, before_cell):
+    def Tree2LentRightVariant(self, before_cell):
         Right = self.Cell.get_Right_cell(before_cell.get_LEft_cell())
         Right.set_Left_cell()
         
@@ -83,4 +83,6 @@ class lent_turring:## КЛАСС ЛЕНТЫ МАШИНЫ ТЬЮРИНГA  ------
        first *=-1
        return first+second
         
-    
+    def NewRightCell(self):
+        Most_right = self.Cell.set_Head_cell()
+        
