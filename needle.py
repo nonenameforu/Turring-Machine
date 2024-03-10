@@ -7,15 +7,18 @@ class needle:
     def __init__(self):
         
         self.index_of_condition = 0
-        self._L = [[["qr>","ab<","","0"],
-                   ["","","","0"]],
-                  
-                  [["","","","1"],
-                   ["","","","1"]],
-                  
-                  [["","","","2"],
-                   ["","","","2"]]]
+        ##self._L = [[["","","","0"],
+        ##           ["","","","0"]],
+        ##          
+        ##          [["","","","1"],
+        ##           ["","","","1"]],
+        ##          
+        ##          [["","","","2"],
+        ##           ["","","","2"]]]
+        self.L = [[["* * _", "1"]
+                   ]]
         self.tape = Class_Lent.lent_turring()
+        
     
     @classmethod
     def Increment_score(cls):##Увеличение счета выполненных операций
@@ -45,14 +48,33 @@ class needle:
         for sublistL in self._L:
             for sublist in sublistL:
                 sublist.pop(-2)
+                
+    def actions_set(self, val):
+        self.tape.Cell.set_Main_cell(val)
+        
+    
+                    
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
     
     def set_needle_derective(self, i, j, der):## Установка дерективы
-        if len(der) == 3 and der.endswith(('>','<','_')) == True:
+        if len(der) == 5 and der.endswith(('>','<','_')) == True:
             self._L[i].insert(j, der)
             
     def get_needle_derective(self, i, j):## Взятие дерективы
         return self._L[i][j]
     
+    def del_needle_derective(self, i, j):
+        self._L[i][j] == "* * _"
     
     def _New_tape(self, prev):##Создние новой ленты внутреннее
         new_tape = Class_Lent.lent_turring
