@@ -18,8 +18,11 @@ class needle:
     def new_order(self, i):
         self.L[i].append([])
     
+    def new_tape(self, i, j):
+        self.L[i][j].append("")
+    
     def set_needle_derective(self, i, j, der):
-        if str.len(der) == 3 and der.endswith(('>','<','_')) == True:
+        if len(der) == 3 and der.endswith(('>','<','_')) == True:
             self.L[i].insert(j, der)
             
         
@@ -34,15 +37,15 @@ class needle:
     ##def get_letter(self, i):
     ##    return self.alphabet[i]
     
-NDL = needle()
+a = needle()
 
 
 
-
+a.new_tape(0,0)
     
        
 
 
 
-print(a.L)
+
 print(a.L)
