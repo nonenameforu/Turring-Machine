@@ -1,27 +1,16 @@
 
-import customtkinter as CTk
+import customtkinter 
 
-class App(CTk.CTk):
+class App():
     def __init__(self):
-        super().__init__()
+        self.window = C
         self.geometry("960x540")
         self.title("Turring machine")
         
-    
+    def run(self):
+        self.window.mainloop()
         
-        self.main_frame = CTk.CTkFrame(master=self , fg_color="black")
-        self.main_frame.pack(side = "top", fill= "both", expand = True)
-        
-        self.main_frame_bottom = CTk.CTkFrame(master = self)
-        self.main_frame_bottom.pack(side = "top", fill= "both", expand = True)
-        
-        
-        
-        
-        
-        
-        
-        
-        
-app = App()
-app.mainloop()
+
+if __name__ == "__main__":
+    win = App()
+    win.run()
