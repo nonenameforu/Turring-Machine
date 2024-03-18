@@ -229,8 +229,9 @@ class ui:
     def del_condition(self, i):##Удаление состояния по индексу
         self.All_ConditinAndState.pop()
             
-    def new_order(self, i):##Создание новой команды
-        self.All_ConditinAndState[i].append([])
+    def new_order(self, tapes):##Создание новой команды
+        self.All_ConditinAndState[self.correct_select()].append([])
+        self.All_ConditinAndState[self.correct_select()][self.Comand[self.correct_select()]] = tapes
         
     def del_order(self, i):## Удаление Последей команды
         self.All_ConditinAndState[i].pop()
