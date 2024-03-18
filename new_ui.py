@@ -36,7 +36,6 @@ class ui:
                 ttk.Label(self.Work_Frame,text="_",font=self.MyFont).grid(row=0, column=i,padx=2, pady=3)
                 ttk.Label(self.Work_Frame,text=str(i-50)).grid(row=1, column=i,padx=2, pady=3)
 
-
         self.Fist_Frame.pack(side="top",fill="both",expand=1)
     
     def Draw_Second_Frame(self): # Окно для отрисовки второго фрейма
@@ -55,14 +54,9 @@ class ui:
         add1 = tk.Frame(self.Third_Frame)
         self.Third_Frame.add(add1,text='Q1')
         
-        
         self.Frame_list.append(self.Create_Scrolable_Frame(add1,"nw"))
-        
         self.Create_First_Command_Frame(self.Frame_list[0])
         
-        
-        
-
         self.Third_Frame.pack(side="top",fill="both",expand=1)
         
 
@@ -138,7 +132,7 @@ class ui:
             
             
     def Button_Add_Command(self): # Кнопка для добавления комманд
-        #self.new_order(self.Comand-1)
+        self.new_order(self.correct_select())
         self.Comand[self.correct_select()]+=1
         ttk.Entry(self.Frame_list[self.correct_select()]).grid(row=(self.Comand[self.correct_select()]), column=1,padx=10, pady=10) # Поле для самой команды
         for i in range (self.Tape):
@@ -233,13 +227,13 @@ class ui:
         self.All_ConditinAndState.append([])
     
     def del_condition(self, i):##Удаление состояния по индексу
-        self.All_ConditinAndState.pop(-i)
+        self.All_ConditinAndState.pop()
             
     def new_order(self, i):##Создание новой команды
         self.All_ConditinAndState[i].append([])
         
     def del_order(self, i):## Удаление Последей команды
-        self.All_ConditinAndState[i].pop(-i)
+        self.All_ConditinAndState[i].pop()
     
     def new_tape(self):##Создание новой ленты в наборе деректив
         for sublistL in self.All_ConditinAndState:
