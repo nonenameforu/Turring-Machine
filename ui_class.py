@@ -1,5 +1,5 @@
 import customtkinter as CTk
-
+from customtkinter import ctk_tk
 
 class App(CTk.CTk):
     def __init__(self):
@@ -8,8 +8,8 @@ class App(CTk.CTk):
         self.title("Turring machine")
         
         ## Первый Фрейм ----------------------------------------------------------------------------------------------
-        self.Fist_frame = CTk.CTkFrame(master=self, fg_color="black").pack(side = "top", fill= "both", expand = True)
-        
+        self.Fist_frame = CTk.CTkFrame(master=self, fg_color="black")
+        self.Fist_frame.pack(side = "top", fill= "both", expand = True)
         
         ## Второй Фрейм ------------------------------------------------------------------------------------------------
         self.Second_frame = CTk.CTkFrame(master=self,height=50)
@@ -25,10 +25,34 @@ class App(CTk.CTk):
         
         ## Третий фрейм ----------------------------------------------------------------------------------------------
         self.Third_frame = CTk.CTkTabview(master=self)
-        self.Third_frame.pack( side = "top", fill= "both", expand = True)
+
         self.Third_frame.add("Q1")
         self.Third_frame.add("Q2")
         
+        self.canvas = CTk.CTkCanvas(self.Third_frame)
+        self.scrol = CTk.CTkScrollbar(self.Third_frame,orientation="vertical",command=self.canvas.yview)
+        self.hor_scrol = CTk.CTkScrollbar(self.Third_frame,orientation="horizontal", command=self.canvas.xview)
+        self.scrolable_frame = CTk.CTkFrame(self.canvas)
+        
+        self.scrolable_frame.bind(
+            "<Configure>", 
+            lambda e :self.canvas.configure(scrollregion=self.canvas.bbox("all")))
+        
+        self.canvas.create_window((0, 0), window=self.scrolable_frame, anchor="nw")
+        
+        self.canvas.configure(yscrollcommand=self.scrol.set,xscrollcommand=self.hor_scrol.set)
+        
+        
+        # for i in range(30):
+        #     for j in range (30):
+        #         enry = CTk.CTkEntry(self.Third_frame)
+        #         enry.grid(row = i, column = j)
+                
+        
+        self.Third_frame.pack( side="top", fill="both")
+        self.canvas.pack(side="left", fill="both",expand=True)
+        self.scrol.pack(side="right", fill="y")
+        self.hor_scrol.pack(side="bottom", fill="x")
         
         
         # self.scrol = CTk.CTkFrame(self.Third_frame.tab("Q1"))
@@ -38,10 +62,7 @@ class App(CTk.CTk):
         #
         # self.scrol_hor = CTk.CTkScrollableFrame(self.scrol,orientation="horizontal")
         
-        # for i in range(30):
-        #     #for j in range (30):
-        #     enry = CTk.CTkEntry(self.scrol)
-        #     enry.grid(row = 0, column = i)
+        
         
         # self.scrol.pack(fill= "both")
         # self.scrol_hor.pack(fill= "both")
