@@ -9,12 +9,12 @@ class ui:
         self.State = int(1) # Колличество состояни 
         self.Tape = int(1) # Колличество лент
         self.Comand = [1] # Колличество Комманд
+        self.length = 201
         
         self.Tape_List = [] # Лист для всех лент
         self.Frame_list = [] # Лист для фреймов в ноутбуке
         self.All_ConditinAndState = [] # Лист для всех состояний
-        
-        
+        self.Start_Tapes = [0]
         
         self.Main_Window  =tk.Tk() #Создание Главнго окна
         
@@ -27,16 +27,14 @@ class ui:
         self.Third_Frame = ttk.Notebook(self.Main_Window) # Ноутбук по сути фрейм с вкладками в виде других фреймов
         self.Fouth_Frame = tk.Frame(self.Main_Window, height=50) # Нижний фрейм для остальнх элементов управления 
         
-    
     def Draw_Fist_Frame(self): #метод для Отрисовки первого Фрейма
         self.new_tape()
         self.add_viev_tape_x3(0)        
         self.Work_Frame = self.Create_Scrolable_Frame(self.Fist_Frame,"n")
-        length = 501
-        for i in range(length):
+        for i in range(self.length):
             Text_cell = StringVar(value="_")
             Label_for_cell = ttk.Label(self.Work_Frame,font=self.MyFont, textvariable=Text_cell)
-            Label_num = ttk.Label(self.Work_Frame,text=str(i-(int((length-1)/2))))
+            Label_num = ttk.Label(self.Work_Frame,text=str(i-(int((self.length-1)/2))))
             self.add_cell(Label_for_cell, 0, 0)
             self.add_cell(Label_num, 0, 1)
             self.add_cell(Text_cell, 0, 2)
@@ -65,10 +63,7 @@ class ui:
         self.Create_First_Command_Frame(self.Frame_list[0])
         
         self.Third_Frame.pack(side="top",fill="both",expand=1)
-        
-
-
-        
+    
     def Draw_Fouth_Frame(self): # Отрисовка четвертого Фрейма
         
         Add_Comand = tk.Button(self.Fouth_Frame, text="Add comand", command=self.Button_Add_Command)
@@ -78,14 +73,13 @@ class ui:
         Delete_Tape = tk.Button(self.Fouth_Frame, text="Delete tape", command=self.Button_Delete_Tape)
         
         self.Give_Main_String = tk.Entry(self.Fouth_Frame)
-        txt = StringVar(value="0")
-        self.Set_Start = tk.Spinbox(self.Fouth_Frame, from_=-1000,to=1000,textvariable=txt, state="readonly")
-        self.Set_Tape = tk.Spinbox(self.Fouth_Frame, from_=0,to=1000)
-        Give = tk.Button(self.Fouth_Frame, text="Give")
+        self.Text_Set_start = StringVar(value="0")
+        self.Set_Start = tk.Spinbox(self.Fouth_Frame, from_=-1000,to=1000,textvariable=self.Text_Set_start, state="readonly")
+        self.Set_Tape = tk.Spinbox(self.Fouth_Frame, from_=1,to=1000)
+        Give = tk.Button(self.Fouth_Frame, text="Give", command=self.Button_Give)
         lable_text = tk.Label(self.Fouth_Frame, text="Text:")
         lable_Start = tk.Label(self.Fouth_Frame, text="Start:")
         label_tape = tk.Label(self.Fouth_Frame, text="Tape:")
-        
         
         Add_Comand.pack(side="left",padx=10)
         Delete_comand.pack(side="left")
@@ -117,10 +111,28 @@ class ui:
         self.Draw_Main_Window()
         self.Main_Window.mainloop()
         
-        
     def Button_Start(self): # Кнопка для старта работы
-        pass
+        State_Send = []
+        Tape_Send = []
+        for i in range(len(self.All_ConditinAndState)):
+            State_Send.append([])
+            for j in range(1,len(self.All_ConditinAndState[i])):
+                State_Send[i].append([])
+                for k in range(1,len(self.All_ConditinAndState[i][j])):
+                    State_Send[i][j-1].append(self.All_ConditinAndState[i][j][k].get())
+                    if len(State_Send[i][j-1][k-1]) != 3 or State_Send[i][j-1][k-1].endswith(('>','<','_')) == False:
+                        showerror(title="Error", message="You have problem in: Q"+str(i+1)+" Comand number "+str(j)+" Tape number "+str(k))
+                        return -1
+            State_Send[i][j-1].append(int(self.All_ConditinAndState[i][j][0].get()))
+            if State_Send[i][j-1][-1]<0 or State_Send[i][j-1][-1]>self.State:
+                showerror(title="Error", message="You have problem in: next command nomber "+str(j)+" State "+str(i+1))
+                return -1
+        for i in range (self.Tape):
+            Tape_Send.append(self.Tape_List[i][2])
+
+            
         
+            
     def Button_Add_State(self): # Кнопка для добавления состояний
         self.State+=1
         new_frame = tk.Frame(self.Third_Frame)
@@ -154,11 +166,9 @@ class ui:
             Entry_for_command.grid(row=(self.Comand[this_Frame_index]), column=i+2,padx=10, pady=10) # Поле для самой команды
         
     def Button_Delete_Last_Comand(self): # Кнопка для удаления комманд
-        #print(self.All_ConditinAndState)
         this_Frame_index = self.correct_select()
         if self.Comand[this_Frame_index]>1:
             for i in range(self.Tape+1):
-                #self.All_ConditinAndState[this_Frame_index][-1][i].grid_forget()
                 self.All_ConditinAndState[this_Frame_index][-1][i].destroy()
             self.del_row(this_Frame_index)
             self.Comand[this_Frame_index]-=1
@@ -167,13 +177,13 @@ class ui:
             showinfo(title="Info", message="You can't delete more Command")
         
     def Button_Add_Tape(self): # Кнопка для добавления Лент
+        self.Start_Tapes.append(0)
         self.new_tape()
         self.add_viev_tape_x3(self.Tape)
-        length = 501
-        for i in range(length):
+        for i in range(self.length):
             Text_cell = StringVar(value="_")
             Label_for_cell = ttk.Label(self.Work_Frame, textvariable=Text_cell,font=self.MyFont)
-            Label_num = ttk.Label(self.Work_Frame, text=str(i-(int((length-1)/2))))
+            Label_num = ttk.Label(self.Work_Frame, text=str(i-(int((self.length-1)/2))))
             
             Label_for_cell.grid(row=(self.Tape**2)+1, column=i,padx=2, pady=3)
             Label_num.grid(row=(self.Tape**2)+2, column=i,padx=2, pady=3)
@@ -196,8 +206,8 @@ class ui:
         
     def Button_Delete_Tape(self): # Кнопка для удаления Лент
         if self.Tape>1:
-            length = 501
-            for i in range(length):
+            self.Start_Tapes.pop()
+            for i in range(self.length):
                 self.Tape_List[-1][0][i].destroy()
                 self.Tape_List[-1][1][i].destroy()
         
@@ -215,8 +225,23 @@ class ui:
             showinfo(title="Info", message="You can't delete more Tape")
         
     def Button_Give(self): # Кнопка для проверки
-        pass
-        
+        Tape_number = int(self.Set_Tape.get())
+        Set_start = int(self.Set_Start.get())
+        self.Start_Tapes[Tape_number-1]=Set_start
+        if Tape_number<=self.Tape:
+            Main_cell = self.Give_Main_String.get()
+            if len(Main_cell)>int(self.length/2)-Tape_number:
+                self.Extension_Tape(int(self.length/2)-Tape_number+10)
+            Main_cell_index = 0
+            for i in range(self.length):
+                if int(Set_start)+int(self.length/2)<=i and Main_cell_index<=len(Main_cell)-1:
+                    self.Tape_List[Tape_number-1][2][i].set(Main_cell[Main_cell_index])
+                    Main_cell_index+=1
+                else:
+                    self.Tape_List[Tape_number-1][2][i].set("_")
+        else:
+            showinfo(title="Info", message="There is no such tape")
+            
     def correct_select(self):
             non_index = self.Third_Frame.select()
             non_index = non_index[len(non_index)-1]
@@ -242,13 +267,12 @@ class ui:
         canvas.pack(side="top", fill="both",expand=True)
         return scrollable_frame
         
-        
     def Create_First_Command_Frame(self,Frame): # Заполнение окна для нового состояния
         ttk.Label(Frame,text="№" ,font=self.MyFont).grid(row=0, column=0,padx=10, pady=10)
         self.new_layer()
         Frame_len2index = (len(self.Frame_list)-1)
         self.add_row(Frame_len2index)
-        for i in range (500):
+        for i in range (251):
             ttk.Label(Frame,text=str(i+1),font=self.MyFont).grid(row=i+1,column=0,pady=10)
         
         Label_next_order = ttk.Label(Frame,text="next order" ,font=self.MyFont)
@@ -289,7 +313,6 @@ class ui:
     def del_column(self, list, row):##Удаление ленты в наборе деректив по индексу
         self.All_ConditinAndState[list][row].pop()
         
-    #------------------------------------------------------------------------
     def new_tape(self):##Создание нового состояния
         self.Tape_List.append([])
     
@@ -312,7 +335,47 @@ class ui:
     def del_cell(self, list, row):##Удаление ленты в наборе деректив по индексу
         self.Tape_List[list][row].pop()
     
+    def Extension_Tape(self, how_many):
+        Extension_left = []
+        Extension_right = []
+        for i in range(self.Tape):
+            Extension_left.append([])
+            Extension_right.append([])
+            for j in range(int(how_many/2)):
+                for k in range(3):
+                    Extension_left[i].append([])
+                    Extension_right[i].append([])
+                
+                Text_cell_left = StringVar(value="_")
+                Label_for_cell_left = ttk.Label(self.Work_Frame, textvariable=Text_cell_left,font=self.MyFont)
+                Label_num_left = ttk.Label(self.Work_Frame, text=str(j-int(((self.length-1)/2+(how_many/2)))))
+                
+                Text_cell_right = StringVar(value="_")
+                Label_for_cell_right = ttk.Label(self.Work_Frame, textvariable=Text_cell_right,font=self.MyFont)
+                Label_num_right = ttk.Label(self.Work_Frame, text=str(j+1+int(((self.length-1)/2))))
+                
+                Extension_left[i][0].append(Label_for_cell_left)
+                Extension_left[i][1].append(Label_num_left)
+                Extension_left[i][2].append(Text_cell_left)
+                
+                Extension_right[i][0].append(Label_for_cell_right)
+                Extension_right[i][1].append(Label_num_right)
+                Extension_right[i][2].append(Text_cell_right)
+                
+            for j in range(self.length):
+                self.Tape_List[i][0][j].forget()
+                self.Tape_List[i][1][j].forget()
         
+        for i in range(self.Tape):
+            self.Tape_List[i][0] = Extension_left[i][0]+self.Tape_List[i][0]+Extension_right[i][0]
+            self.Tape_List[i][1] = Extension_left[i][1]+self.Tape_List[i][1]+Extension_right[i][1]
+            self.Tape_List[i][2] = Extension_left[i][2]+self.Tape_List[i][2]+Extension_right[i][2]
+            for j in range(how_many+self.length):
+                self.Tape_List[i][0][j].grid(row=i*2, column=j,padx=2, pady=3)
+                self.Tape_List[i][1][j].grid(row=(i*2)+1, column=j,padx=2, pady=3)
+        self.length+=how_many
+            
+    
 if __name__ == "__main__":
     app = ui()
     app.run()
