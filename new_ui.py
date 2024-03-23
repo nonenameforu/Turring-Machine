@@ -130,9 +130,6 @@ class ui:
         for i in range (self.Tape):
             Tape_Send.append(self.Tape_List[i][2])
 
-            
-        
-            
     def Button_Add_State(self): # Кнопка для добавления состояний
         self.State+=1
         new_frame = tk.Frame(self.Third_Frame)
