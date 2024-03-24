@@ -3,7 +3,7 @@ from tkinter import ttk
 from tkinter import Tk, Label, font
 from tkinter import *
 from tkinter.messagebox import showerror, showwarning, showinfo
-
+import needle
 class ui:
     def __init__(self) -> None:
         self.State = int(1) # Колличество состояни 
@@ -112,6 +112,7 @@ class ui:
         self.Main_Window.mainloop()
         
     def Button_Start(self): # Кнопка для старта работы
+        
         State_Send = []
         Tape_Send = []
         for i in range(len(self.All_ConditinAndState)):
@@ -120,15 +121,17 @@ class ui:
                 State_Send[i].append([])
                 for k in range(1,len(self.All_ConditinAndState[i][j])):
                     State_Send[i][j-1].append(self.All_ConditinAndState[i][j][k].get())
-                    if len(State_Send[i][j-1][k-1]) != 3 or State_Send[i][j-1][k-1].endswith(('>','<','_')) == False:
+                    if len(State_Send[i][j-1][k-1]) != 5 or State_Send[i][j-1][k-1].endswith(('>','<','_')) == False:
                         showerror(title="Error", message="You have problem in: Q"+str(i+1)+" Comand number "+str(j)+" Tape number "+str(k))
                         return -1
-            State_Send[i][j-1].append(int(self.All_ConditinAndState[i][j][0].get()))
-            if State_Send[i][j-1][-1]<0 or State_Send[i][j-1][-1]>self.State:
+            State_Send[i][j-1].append(self.All_ConditinAndState[i][j][0].get())
+            if int(State_Send[i][j-1][-1])<0 or int(State_Send[i][j-1][-1])>self.State:
                 showerror(title="Error", message="You have problem in: next command nomber "+str(j)+" State "+str(i+1))
                 return -1
         for i in range (self.Tape):
             Tape_Send.append(self.Tape_List[i][2])
+        self.logic(State_Send)
+
 
     def Button_Add_State(self): # Кнопка для добавления состояний
         self.State+=1
@@ -372,7 +375,57 @@ class ui:
                 self.Tape_List[i][1][j].grid(row=(i*2)+1, column=j,padx=2, pady=3)
         self.length+=how_many
             
+    def logic(self, states):
+        start_position_list = self.Start_Tapes
+        tape = 0
     
+        condition_index = 0
+        command_index = 0
+        
+        switch = True
+        buff = []
+        while switch == True:
+            
+            for i in range(len(states[condition_index][command_index])):
+                buff.append((states[condition_index][command_index][i]).split(" "))
+      
+            while buff[tape][0] == self.Tape_List[tape][2][start_position_list[tape]+100].get():
+                
+                self.Tape_List[tape][2][start_position_list[tape]+100].set(buff[tape][1])
+                match buff[tape][2]:
+                    case '>':
+                        start_position_list[tape]+=1    
+                    case '<':
+                        start_position_list[tape]-=1     
+                    case '_':
+                        pass
+                print(len(states[condition_index][command_index])-1)    
+                if tape < len(states[condition_index][command_index])-1 and tape < self.Tape:    
+                    tape +=1
+                else:
+                    tape = 0
+                
+                if len(buff[tape]) == 1:
+                    
+
+                    if buff[tape][0] != '0':        
+                        condition_index = int(buff[tape][0])                 
+                    else:
+                        switch = False
+                    
+                if start_position_list[tape-1] == 101:
+                    switch = False
+                    showerror(title="Error", message="End tape")
+                    break
+ 
+            
+            if command_index < len(states[condition_index]):
+                command_index +=1
+            else:
+                command_index = 0
+                
+            
+
 if __name__ == "__main__":
     app = ui()
     app.run()
