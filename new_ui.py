@@ -124,10 +124,10 @@ class ui:
                     if len(State_Send[i][j-1][k-1]) != 5 or State_Send[i][j-1][k-1].endswith(('>','<','_')) == False:
                         showerror(title="Error", message="You have problem in: Q"+str(i+1)+" Comand number "+str(j)+" Tape number "+str(k))
                         return -1
-            State_Send[i][j-1].append(self.All_ConditinAndState[i][j][0].get())
-            if int(State_Send[i][j-1][-1])<0 or int(State_Send[i][j-1][-1])>self.State:
-                showerror(title="Error", message="You have problem in: next command nomber "+str(j)+" State "+str(i+1))
-                return -1
+                State_Send[i][j-1].append(self.All_ConditinAndState[i][j][0].get())
+                if int(State_Send[i][j-1][-1])<0 or int(State_Send[i][j-1][-1])>self.State:
+                    showerror(title="Error", message="You have problem in: next command nomber "+str(j)+" State "+str(i+1))
+                    return -1
         for i in range (self.Tape):
             Tape_Send.append(self.Tape_List[i][2])
         self.logic(State_Send)
@@ -275,13 +275,13 @@ class ui:
         for i in range (251):
             ttk.Label(Frame,text=str(i+1),font=self.MyFont).grid(row=i+1,column=0,pady=10)
         
-        Label_next_order = ttk.Label(Frame,text="next order" ,font=self.MyFont)
+        Label_next_order = ttk.Label(Frame,text="Next State" ,font=self.MyFont)
         self.add_column(Label_next_order, Frame_len2index, 0)
 
         Label_next_order.grid(row=0, column=1,padx=10, pady=10)
         
         for i in range(self.Tape):
-            Labele_Comand_tape = ttk.Label(Frame,text="Command:Tape"+str(i+1) ,font=self.MyFont)
+            Labele_Comand_tape = ttk.Label(Frame,text="Command: Tape"+str(i+1) ,font=self.MyFont)
             self.add_column(Labele_Comand_tape, Frame_len2index, 0)
             Labele_Comand_tape.grid(row=0, column=i+2,padx=10, pady=10)
 
@@ -381,13 +381,18 @@ class ui:
     
         condition_index = 0
         command_index = 0
-        
+        flag = True
         switch = True
         buff = []
         while switch == True:
-            
+            buff = []
             for i in range(len(states[condition_index][command_index])):
                 buff.append((states[condition_index][command_index][i]).split(" "))
+            print(states)
+            
+            print(buff)
+            if flag == False:
+                tape = 0
       
             while buff[tape][0] == self.Tape_List[tape][2][start_position_list[tape]+100].get():
                 
@@ -402,24 +407,26 @@ class ui:
                 print(len(states[condition_index][command_index])-1)    
                 if tape < len(states[condition_index][command_index])-1 and tape < self.Tape:    
                     tape +=1
+                    if tape == len(states[condition_index][command_index])-1 and tape == self.Tape:
+                        flag = False    
                 else:
                     tape = 0
                 
                 if len(buff[tape]) == 1:
-                    
 
                     if buff[tape][0] != '0':        
-                        condition_index = int(buff[tape][0])                 
+                        condition_index = int(buff[tape][0])-1
+                        break                 
                     else:
                         switch = False
                     
-                if start_position_list[tape-1] == 101:
-                    switch = False
-                    showerror(title="Error", message="End tape")
-                    break
+                #if start_position_list[tape] == 101:
+                #    switch = False
+                #    showerror(title="Error", message="End tape")
+                #    break
  
             
-            if command_index < len(states[condition_index]):
+            if command_index < len(states[condition_index])-1:
                 command_index +=1
             else:
                 command_index = 0
