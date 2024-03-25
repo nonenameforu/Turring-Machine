@@ -3,13 +3,17 @@ from tkinter import ttk
 from tkinter import Tk, Label, font
 from tkinter import *
 from tkinter.messagebox import showerror, showwarning, showinfo
-import needle
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+
 class ui:
     def __init__(self) -> None:
         self.State = int(1) # Колличество состояни 
         self.Tape = int(1) # Колличество лент
         self.Comand = [1] # Колличество Комманд
         self.length = 201
+        
+        self.Score = [[],[]]
         
         self.Tape_List = [] # Лист для всех лент
         self.Frame_list = [] # Лист для фреймов в ноутбуке
@@ -29,7 +33,7 @@ class ui:
         
     def Draw_Fist_Frame(self): #метод для Отрисовки первого Фрейма
         self.new_tape()
-        self.add_viev_tape_x3(0)        
+        self.add_viev_tape_x3(0)
         self.Work_Frame = self.Create_Scrolable_Frame(self.Fist_Frame,"n")
         for i in range(self.length):
             Text_cell = StringVar(value="_")
@@ -48,10 +52,12 @@ class ui:
         Add_State = tk.Button(self.Second_Frame,text="Add State", command=self.Button_Add_State)
         Delete_Last_State = tk.Button(self.Second_Frame,text="Delete last state", command=self.Button_Delete_Last_State)
         Start = tk.Button(self.Second_Frame,text="Start", command=self.Button_Start)
+        Grapgic = tk.Button(self.Second_Frame,text="Graphic", command=self.Button_Graphic)
         
         Delete_Last_State.pack(side="right")
         Add_State.pack(side="right",padx=10)
         Start.pack(side="left")
+        Grapgic.pack(side="left",padx=10)
         self.Second_Frame.pack(side="top",fill="x")
         
     def Draw_Third_Frame(self): # Отрисовка Третьего фрейма
@@ -130,8 +136,59 @@ class ui:
                     return -1
         for i in range (self.Tape):
             Tape_Send.append(self.Tape_List[i][2])
+            
+        self.Score[1].append(0)
+        for i in range(self.Tape):
+            for j in range(self.Start_Tapes[i]+100,self.length):
+                if self.Tape_List[i][2][j].get() !="_":
+                    self.Score[1][-1]+=1
+        print(self.L_Leng())
         self.logic(State_Send)
+        
+    def L_Leng(self):
+        L = ""
+        count = [0, 0, 0]
+        alphabet = "abc"
 
+        for j in range(self.Start_Tapes[0]+100,self.length):
+            if self.Tape_List[0][2][j].get() !="_":
+                L+=self.Tape_List[0][2][j].get()
+           
+        for i in range(3):
+            if L[0] == alphabet[i]:
+                count[i] +=1
+                L = L[1:]
+            else:
+                return False
+        
+            while(L[0] == alphabet[i]):
+                count[i] +=1
+                L = L[1:]
+                if len(L) == 0:
+                    L = "0"
+            
+        
+        if count[0] == count[1] or count[1] == count[2]:
+            return True
+        else:
+            return False
+      
+    def Button_Graphic(self):
+        Graphic_window = Toplevel(self.Main_Window)
+        Graphic_window.geometry
+        Graphic_window.title("Graphic")
+        Graphic_window.grab_set()
+        Graphic_window.focus_set()
+        fig = Figure(figsize=(5, 4), dpi=100)
+        plot = fig.add_subplot(1, 1, 1)
+        plot.plot(self.Score[0], self.Score[1])
+
+
+
+        # Добавляем график в Tkinter
+        canvas = FigureCanvasTkAgg(fig, master=Graphic_window)
+        canvas.draw()
+        canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
     def Button_Add_State(self): # Кнопка для добавления состояний
         self.State+=1
@@ -376,6 +433,7 @@ class ui:
         self.length+=how_many
             
     def logic(self, states):
+        self.Score[0].append(0)
         start_position_list = self.Start_Tapes
         tape = 0
     
@@ -393,8 +451,10 @@ class ui:
             print(buff)
             if flag == False:
                 tape = 0
-      
+
+            
             while buff[tape][0] == self.Tape_List[tape][2][start_position_list[tape]+100].get():
+                
                 
                 self.Tape_List[tape][2][start_position_list[tape]+100].set(buff[tape][1])
                 match buff[tape][2]:
@@ -404,6 +464,7 @@ class ui:
                         start_position_list[tape]-=1     
                     case '_':
                         pass
+                self.Score[0][-1] +=1
                 print(len(states[condition_index][command_index])-1)    
                 if tape < len(states[condition_index][command_index])-1 and tape < self.Tape:    
                     tape +=1
